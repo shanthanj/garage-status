@@ -19,7 +19,7 @@ restService.post("/garageStatus", function(req, res) {
  var status;
  getGarageStatus(url, function(response) {
     console.log("**"+response);
-    status = response;
+    status = "Main Garage is " + response;
     let respObj = {
       "fulfillmentText": status
       ,"fulfillmentMessages": [
