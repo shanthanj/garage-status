@@ -3,6 +3,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
+const sa = require("superagent")
 
 const restService = express();
 
@@ -16,27 +17,56 @@ restService.use(bodyParser.json());
 
 restService.post("/garageStatus", function(req, res) {
   var requestedIntent = getRequestedIntent(req);
-  console.log("***"+requestedIntent);
- var url = 'https://pjhass.duckdns.org:8123/api/states/cover.garage?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
+  var statusUrl = 'https://pjhass.duckdns.org:8123/api/states/cover.garage?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
+  var openMainGarageUrl = 'https://pjhass.duckdns.org:8123/api/services/cover/open_cover?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
+  var closeMainGarageUrl = 'https://pjhass.duckdns.org:8123/api/services/cover/close_cover?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
  var status;
- getGarageStatus(url, function(response) {
-    console.log("**"+response);
-    status = "Main Garage is " + response;
-    let respObj = {
-      "fulfillmentText": status
-      ,"fulfillmentMessages": [
-        {
-        "text": {
-          "text": [
-            status
-          ]
-        }
-      }
-      ]
-      ,"source": "garage-status"
-    }
-    return res.json(respObj);
+
+ switch(requestedIntent) {
+   case "getStatus":
+       getGarageStatus(statusUrl, function(response) {
+         /*getJsonResp("Main Garage is " + response, "garage-status", function(resp) {
+           return res.json(resp);
+         });*/
+         return res.json(getJsonResp("Main Garage is " + response, "garage-status"));
+       });
+       break;
+
+   case "openMainGarage":
+       //first we need to check the status of the garage, if already open do nothing else open
+       getGarageStatus(statusUrl, function(response) {
+          if (response == 'open') {
+            return res.json(getJsonResp("Hm.. Looks like Main Garage is already Open.", "openGarage"));
+          } else {
+            openOrCloseMainGarage(openMainGarageUrl, function(response) {
+              return res.json(getJsonResp("Ok Opening Main Garage.", "openGarage"));
+            });
+          }
+       });
+      break;
+
+   case "closeMainGarage":
+       //first we need to check the status of the garage, if already open do nothing else open
+       getGarageStatus(statusUrl, function(response) {
+          if (response == 'closed') {
+            return res.json(getJsonResp("Hm.. Looks like Main Garage is already Closed.", "closeGarage"));
+          } else {
+            openOrCloseMainGarage(closeMainGarageUrl, function(response) {
+              return res.json(getJsonResp("Ok Closing Main Garage.", "closeGarage"));
+            });
+          }
+       });
+      break;
+
+   default:
+        console.log("Do nothing");
+ }
+
+ /*
+ getGarageStatus(statusUrl, function(response) {
+    return res.json(getJsonResp("Main Garage is " + response, "garage-status"));
  });
+ */
 });
 
 restService.post("/audio", function(req, res) {
@@ -214,9 +244,34 @@ function getGarageStatus(urlToCall, callback) {
   });
 }
 
+function openOrCloseMainGarage(urlToCall, callback) {
+  sa.post(urlToCall)
+    .send('{"entity_id":"cover.garage"}')
+    .end(function(err, resp) {
+      return callback(true);
+    });
+}
+
 function getRequestedIntent(req) {
-   var parsedReq = JSON.parse(req);
-   return parsedReq.intent.displayName;
+   return req.body.queryResult.intent.displayName;
+}
+
+function getJsonResp(status, source) {
+  let respObj = {
+    "fulfillmentText": status
+    ,"fulfillmentMessages": [
+      {
+      "text": {
+        "text": [
+          status
+        ]
+      }
+    }
+    ]
+    ,"source": source
+  }
+
+  return respObj;
 }
 
 /*
