@@ -20,11 +20,20 @@ restService.post("/garageStatus", function(req, res) {
  getGarageStatus(url, function(response) {
     console.log("**"+response);
     status = response;
-    return res.json({
-      status: status,
-      displayText: status,
-      source: "garage-status"
-    });
+    let respObj = {
+      "fulfillmentText": status
+      ,"fulfillmentMessages": [
+        {
+        "text": {
+          "text": [
+            status
+          ]
+        }
+      }
+      ]
+      ,"source": "garage-status"
+    }
+    return res.json(respObj);
  });
 });
 
