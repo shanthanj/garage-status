@@ -36,7 +36,7 @@ restService.post("/garageStatus", function(req, res) {
        //first we need to check the status of the garage, if already open do nothing else open
        getGarageStatus(statusUrl, function(response) {
           if (response == 'open') {
-            return res.json(getJsonResp("Mmmmm.. Looks like Main Garage is already Open.", "openGarage"));
+            return res.json(getJsonResp("Nice try. Main Garage is already Open.", "openGarage"));
           } else {
             openOrCloseMainGarage(openMainGarageUrl, function(response) {
               return res.json(getJsonResp("Ok Opening Main Garage.", "openGarage"));
@@ -49,7 +49,7 @@ restService.post("/garageStatus", function(req, res) {
        //first we need to check the status of the garage, if already open do nothing else open
        getGarageStatus(statusUrl, function(response) {
           if (response == 'closed') {
-            return res.json(getJsonResp("Mmmmm.. Looks like Main Garage is already Closed.", "closeGarage"));
+            return res.json(getJsonResp("I can't do that. Main Garage is already Closed.", "closeGarage"));
           } else {
             openOrCloseMainGarage(closeMainGarageUrl, function(response) {
               return res.json(getJsonResp("Ok Closing Main Garage.", "closeGarage"));
