@@ -15,7 +15,8 @@ restService.use(
 restService.use(bodyParser.json());
 
 restService.post("/garageStatus", function(req, res) {
-  console.log("***"+req);
+  var requestedIntent = getRequestedIntent(req);
+  console.log("***"+requestedIntent);
  var url = 'https://pjhass.duckdns.org:8123/api/states/cover.garage?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
  var status;
  getGarageStatus(url, function(response) {
@@ -211,6 +212,11 @@ function getGarageStatus(urlToCall, callback) {
     var parsedStatus = JSON.parse(body);
     return callback(parsedStatus.state);
   });
+}
+
+function getRequestedIntent(req) {
+   var parsedReq = JSON.parse(req);
+   return parsedReq.intent.displayName;
 }
 
 /*
