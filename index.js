@@ -15,6 +15,7 @@ restService.use(
 restService.use(bodyParser.json());
 
 restService.post("/garageStatus", function(req, res) {
+  console.log("***"+req);
  var url = 'https://pjhass.duckdns.org:8123/api/states/cover.garage?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
  var status;
  getGarageStatus(url, function(response) {
