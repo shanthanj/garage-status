@@ -1,14 +1,17 @@
 {
-  "name": "webhook-echo-sample",
+  "name": "garage-status",
   "version": "1.0.0",
-  "description": "Webhook echo sample",
+  "description": "Gets Garage Status",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Sunil Syal",
+  "author": "Prasanthan Jayaram",
   "dependencies": {
-    "body-parser": "^1.15.0",
-    "express": "^4.13.4"
+    "JSON": "^1.0.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "https": "^1.0.0",
+    "request": "^2.87.0"
   }
 }

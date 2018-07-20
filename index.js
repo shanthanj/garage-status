@@ -2,6 +2,7 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const request = require("request");
 
 const restService = express();
 
@@ -13,24 +14,24 @@ restService.use(
 
 restService.use(bodyParser.json());
 
-restService.post("/echo", function(req, res) {
-  var speech =
-    req.body.result &&
-    req.body.result.parameters &&
-    req.body.result.parameters.echoText
-      ? req.body.result.parameters.echoText
-      : "Seems like some problem. Speak again.";
-  return res.json({
-    speech: speech,
-    displayText: speech,
-    source: "webhook-echo-sample"
-  });
+restService.post("/garageStatus", function(req, res) {
+ var url = 'https://pjhass.duckdns.org:8123/api/states/cover.garage?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
+ var status;
+ getGarageStatus(url, function(response) {
+    console.log("**"+response);
+    status = response;
+    return res.json({
+      status: status,
+      displayText: status,
+      source: "garage-status"
+    });
+ });
 });
 
 restService.post("/audio", function(req, res) {
   var speech = "";
   switch (req.body.result.parameters.AudioSample.toLowerCase()) {
-    //Speech Synthesis Markup Language 
+    //Speech Synthesis Markup Language
     case "music one":
       speech =
         '<speak><audio src="https://actions.google.com/sounds/v1/cartoon/slide_whistle.ogg">did not get your audio file</audio></speak>';
@@ -195,6 +196,26 @@ restService.post("/slack-test", function(req, res) {
   });
 });
 
+function getGarageStatus(urlToCall, callback) {
+  request(urlToCall, function(error, response, body) {
+    var parsedStatus = JSON.parse(body);
+    return callback(parsedStatus.state);
+  });
+}
+
+/*
+function getGarageStatus() {
+  var garageStatusResponse = request('https://pjhass.duckdns.org:8123/api/states/cover.garage?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94', function(error, response, body) {
+    //console.log('error:', error);
+    //console.log('statusCode:', response && response.statusCode);
+    //console.log('body:', body);
+    var parsedStatus = JSON.parse(body);
+    console.log(parsedStatus.state);
+    return parsedStatus.state;
+  });
+  return garageStatusResponse;
+}
+*/
 restService.listen(process.env.PORT || 8000, function() {
   console.log("Server up and listening");
 });
