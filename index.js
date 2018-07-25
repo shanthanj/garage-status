@@ -34,7 +34,6 @@ restService.post("/garageStatus", function(req, res) {
          /*getJsonResp("Main Garage is " + response, "garage-status", function(resp) {
            return res.json(resp);
          });*/
-         console.log("End: " + new Date().getTime());
          return res.json(getJsonResp("Main Garage is " + response, "garage-status"));
        });
        break;
@@ -245,7 +244,6 @@ restService.post("/slack-test", function(req, res) {
 });
 
 function getGarageStatus(urlToCall, callback) {
-  console.log("Start: " + new Date().getTime());
   request(urlToCall, function(error, response, body) {
     var parsedStatus = JSON.parse(body);
     return callback(parsedStatus.state);
