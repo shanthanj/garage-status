@@ -1,5 +1,11 @@
 "use strict";
 
+var http = require("http");
+setInterval(function() {
+    console.log("pinging my app...");
+    http.get("http://garage-status.herokuapp.com");
+}, 120000); // every 2 minutes (300000)
+
 const express = require("express");
 const bodyParser = require("body-parser");
 const request = require("request");
