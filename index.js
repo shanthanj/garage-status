@@ -23,24 +23,28 @@ restService.use(bodyParser.json());
 
 restService.post("/garageStatus", function(req, res) {
   var requestedIntent = getRequestedIntent(req);
-  var statusUrl = 'https://pjhass.duckdns.org:8123/api/states/cover.garage?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
-  var openMainGarageUrl = 'https://pjhass.duckdns.org:8123/api/services/cover/open_cover?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
-  var closeMainGarageUrl = 'https://pjhass.duckdns.org:8123/api/services/cover/close_cover?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94';
+  var statusUrl = 'https://pjhass.duckdns.org/api/states/cover.garage?api_password=pjhome2018';
+  var openMainGarageUrl = 'https://pjhass.duckdns.org/api/services/cover/open_cover?api_password=pjhome2018';
+  var closeMainGarageUrl = 'https://pjhass.duckdns.org/api/services/cover/close_cover?api_password=pjhome2018';
  var status;
 
  switch(requestedIntent) {
    case "getStatus":
        getGarageStatus(statusUrl, function(response) {
-         /*getJsonResp("Main Garage is " + response, "garage-status", function(resp) {
-           return res.json(resp);
-         });*/
-         return res.json(getJsonResp("Main Garage is " + response, "garage-status"));
+         if (response == 'unknown') {
+            return res.json(getJsonResp("Sorry I couldn't detect the main garage status. Status is " + response, "garage-status"));
+         } else {
+            return res.json(getJsonResp("Main Garage is " + response, "garage-status"));
+         }
        });
        break;
 
    case "openMainGarage":
        //first we need to check the status of the garage, if already open do nothing else open
        getGarageStatus(statusUrl, function(response) {
+          if (response == 'unknown') {
+             return res.json(getJsonResp("Sorry, I cannot open since the garage is in uknown state at the moment", "openGarage"));
+          }
           if (response == 'open') {
             return res.json(getJsonResp("Nice try. Main Garage is already Open.", "openGarage"));
           } else {
@@ -54,6 +58,9 @@ restService.post("/garageStatus", function(req, res) {
    case "closeMainGarage":
        //first we need to check the status of the garage, if already open do nothing else open
        getGarageStatus(statusUrl, function(response) {
+          if (response == 'unknown') {
+             return res.json(getJsonResp("Sorry, I cannot open since the garage is in uknown state at the moment", "openGarage"));
+          }
           if (response == 'closed') {
             return res.json(getJsonResp("I can't do that. Main Garage is already Closed.", "closeGarage"));
           } else {
