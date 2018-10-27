@@ -26,9 +26,20 @@ restService.post("/garageStatus", function(req, res) {
   var statusUrl = 'https://pjhass.duckdns.org/api/states/cover.garage?api_password=pjhome2018';
   var openMainGarageUrl = 'https://pjhass.duckdns.org/api/services/cover/open_cover?api_password=pjhome2018';
   var closeMainGarageUrl = 'https://pjhass.duckdns.org/api/services/cover/close_cover?api_password=pjhome2018';
- var status;
+  var changeChannelUrl = 'https://pjhass.duckdns.org/api/services/script/turn_on?api_password=pjhome2018';
+  var status;
 
  switch(requestedIntent) {
+   case "changeChannel":
+       var requestedChannel = getRequestedChannel(req);
+       changeChannel(changeChannelUrl, requestedChannel, function(response) {
+          if (response && response.statusCode == 200) {
+             return res.json(getJsonResp("Changing Channel to " + requestedChannel, "changeChannel"));
+          } else {
+             return res.json(getJsonResp("Sorry I could'nt recognize the channel" + requestedChannel + ". Try a valid channel", "changeChannel"));
+          }
+       });
+       break;
    case "getStatus":
        getGarageStatus(statusUrl, function(response) {
          if (response == 'unknown') {
@@ -75,11 +86,6 @@ restService.post("/garageStatus", function(req, res) {
         console.log("Do nothing");
  }
 
- /*
- getGarageStatus(statusUrl, function(response) {
-    return res.json(getJsonResp("Main Garage is " + response, "garage-status"));
- });
- */
 });
 
 restService.post("/audio", function(req, res) {
@@ -265,8 +271,49 @@ function openOrCloseMainGarage(urlToCall, callback) {
     });
 }
 
+function changeChannel(urlToCall, requestedChannel, callback) {
+   var entityToChange = "";
+   switch(requestedChannel) {
+      case "CBC":
+         entityToChange = "script.tv_channel_cbc";
+         break;
+      case "CP24":
+         entityToChange = "script.tv_channel_cp24";
+         break;
+      case "Vijay TV":
+         entityToChange = "script.tv_channel_vijay";
+         break;
+      case "SUN TV":
+         entityToChange = "script.tv_channel_suntv";
+         break;
+      case "KTV":
+         entityToChange = "script.tv_channel_ktv";
+         break;
+      case "SUN Music":
+         entityToChange = "script.tv_channel_sun_music";
+         break;
+      case "TVI":
+         entityToChange = "script.tv_channel_tvi";
+         break;
+   }
+   if (entityToChange != ""){
+      sa.post(urlToCall)
+       .send('{"entity_id":"' + entityToChange + '"}')
+       .end(function(err, resp) {
+         return callback(true);
+       });
+   } else {
+      return callback(false);
+   }
+}
+   
+
 function getRequestedIntent(req) {
    return req.body.queryResult.intent.displayName;
+}
+
+function getRequestedChannel(req) {
+   return req.body.queryResult.parameters.Channel;
 }
 
 function getJsonResp(status, source) {
@@ -287,19 +334,6 @@ function getJsonResp(status, source) {
   return respObj;
 }
 
-/*
-function getGarageStatus() {
-  var garageStatusResponse = request('https://pjhass.duckdns.org:8123/api/states/cover.garage?api_password=AIzaSyC5IsGNuOj_VC81ojSL3Bv-X3oXhRGQb94', function(error, response, body) {
-    //console.log('error:', error);
-    //console.log('statusCode:', response && response.statusCode);
-    //console.log('body:', body);
-    var parsedStatus = JSON.parse(body);
-    console.log(parsedStatus.state);
-    return parsedStatus.state;
-  });
-  return garageStatusResponse;
-}
-*/
 restService.listen(process.env.PORT || 8000, function() {
   console.log("Server up and listening");
 });
