@@ -33,7 +33,6 @@ restService.post("/garageStatus", function(req, res) {
    case "changeChannel":
        var requestedChannel = getRequestedChannel(req);
        changeChannel(changeChannelUrl, requestedChannel, function(response) {
-          console.log("Response is: " + response);
           if (response) {
              return res.json(getJsonResp("Changing Channel to " + requestedChannel, "changeChannel"));
           } else {
