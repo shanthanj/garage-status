@@ -333,7 +333,7 @@ function getRequestedChannel(req) {
 }
 
 function getRequestedChannelIFTTT(req) {
-  console.log("req:"+req.body);
+  console.log("req:"+req.body.channel);
    return req.body.channel;
 }
 
