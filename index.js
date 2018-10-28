@@ -3,7 +3,7 @@
 var http = require("http");
 setInterval(function() {
    // console.log("pinging my app...");
-    http.get("http://garage-status.herokuapp.com");
+   http.get("http://garage-status.herokuapp.com");
 }, 300000); // every 2 minutes (300000)
 
 const express = require("express");
@@ -308,6 +308,9 @@ function changeChannel(urlToCall, requestedChannel, callback) {
       case "TVI":
          entityToChange = "script.tv_channel_tvi";
          break;
+      case "HALLMARK":
+         entityToChange = "script.tv_channel_hallmark";
+         break;
    }
    if (entityToChange != ""){
       sa.post(urlToCall)
@@ -330,6 +333,7 @@ function getRequestedChannel(req) {
 }
 
 function getRequestedChannelIFTTT(req) {
+  console.log("req:"+req);
    return req.body.channel;
 }
 
