@@ -22,6 +22,7 @@ restService.use(
 restService.use(bodyParser.json());
 
 restService.post("/changeChannel", function(req, res) {
+   console.log("changeChannel Post method");
    var requestedChannel = getRequestedChannelIFTTT(req);
    changeChannel(changeChannelUrl, requestedChannel, function(response) {
           if (response) {
