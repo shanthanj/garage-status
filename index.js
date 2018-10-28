@@ -22,7 +22,7 @@ restService.use(
 restService.use(bodyParser.json());
 
 restService.post("/changeChannel", function(req, res) {
-   var requestedChannel = getRequestedChannel(req);
+   var requestedChannel = getRequestedChannelIFTTT(req);
    changeChannel(changeChannelUrl, requestedChannel, function(response) {
           if (response) {
              return res.json(getJsonResp("Changing Channel to " + requestedChannel, "changeChannel"));
@@ -325,6 +325,10 @@ function getRequestedIntent(req) {
 
 function getRequestedChannel(req) {
    return req.body.queryResult.parameters.Channel;
+}
+
+function getRequestedChannelIFTTT(req) {
+   return req.channel;
 }
 
 function getJsonResp(status, source) {
