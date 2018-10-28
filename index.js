@@ -22,8 +22,8 @@ restService.use(
 restService.use(bodyParser.json());
 
 restService.post("/changeChannel", function(req, res) {
-   console.log("changeChannel Post method");
    var requestedChannel = getRequestedChannelIFTTT(req);
+   var changeChannelUrl = 'https://pjhass.duckdns.org/api/services/script/turn_on?api_password=pjhome2018';
    changeChannel(changeChannelUrl, requestedChannel, function(response) {
           if (response) {
              return res.json(getJsonResp("Changing Channel to " + requestedChannel, "changeChannel"));
