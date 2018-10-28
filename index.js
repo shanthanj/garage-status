@@ -21,6 +21,17 @@ restService.use(
 
 restService.use(bodyParser.json());
 
+restService.post("/changeChannel", function(req, res) {
+   var requestedChannel = getRequestedChannel(req);
+   changeChannel(changeChannelUrl, requestedChannel, function(response) {
+          if (response) {
+             return res.json(getJsonResp("Changing Channel to " + requestedChannel, "changeChannel"));
+          } else {
+             return res.json(getJsonResp("Sorry I could'nt recognize the channel " + requestedChannel + ". Try a valid channel", "changeChannel"));
+          }
+       });
+});
+
 restService.post("/garageStatus", function(req, res) {
   var requestedIntent = getRequestedIntent(req);
   var statusUrl = 'https://pjhass.duckdns.org/api/states/cover.garage?api_password=pjhome2018';
