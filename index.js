@@ -330,8 +330,7 @@ function getRequestedChannel(req) {
 }
 
 function getRequestedChannelIFTTT(req) {
-   console.log(req);
-   return req.channel;
+   return req.body.channel;
 }
 
 function getJsonResp(status, source) {
