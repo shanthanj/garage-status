@@ -285,14 +285,15 @@ function openOrCloseMainGarage(urlToCall, callback) {
 
 function changeChannel(urlToCall, requestedChannel, callback) {
    var entityToChange = "";
-   switch(requestedChannel) {
+   var reqChannel = requestedChannel.toUpperCase();
+   switch(reqChannel) {
       case "CBC":
          entityToChange = "script.tv_channel_cbc";
          break;
       case "CP24":
          entityToChange = "script.tv_channel_cp24";
          break;
-      case "Vijay TV":
+      case "VIJAY TV":
          entityToChange = "script.tv_channel_vijay";
          break;
       case "SUN TV":
@@ -301,7 +302,7 @@ function changeChannel(urlToCall, requestedChannel, callback) {
       case "KTV":
          entityToChange = "script.tv_channel_ktv";
          break;
-      case "SUN Music":
+      case "SUN MUSIC":
          entityToChange = "script.tv_channel_sun_music";
          break;
       case "TVI":
@@ -329,6 +330,7 @@ function getRequestedChannel(req) {
 }
 
 function getRequestedChannelIFTTT(req) {
+   console.log(req);
    return req.channel;
 }
 
