@@ -35,7 +35,7 @@ restService.post("/changeChannel", function(req, res) {
 
 restService.post("/garageStatus", function(req, res) {
   var requestedIntent = getRequestedIntent(req);
-  var statusUrl = 'https://pjhass.duckdns.org/api/states/cover.garage?api_password=pjhome2018';
+  var statusUrl = 'https://pjhass.duckdns.org/api/states/cover.main_garage?api_password=pjhome2018';
   var openMainGarageUrl = 'https://pjhass.duckdns.org/api/services/cover/open_cover?api_password=pjhome2018';
   var closeMainGarageUrl = 'https://pjhass.duckdns.org/api/services/cover/close_cover?api_password=pjhome2018';
   var changeChannelUrl = 'https://pjhass.duckdns.org/api/services/script/turn_on?api_password=pjhome2018';
@@ -277,7 +277,7 @@ function getGarageStatus(urlToCall, callback) {
 
 function openOrCloseMainGarage(urlToCall, callback) {
   sa.post(urlToCall)
-    .send('{"entity_id":"cover.garage"}')
+    .send('{"entity_id":"cover.main_garage"}')
     .end(function(err, resp) {
       return callback(true);
     });
