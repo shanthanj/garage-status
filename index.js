@@ -21,6 +21,28 @@ restService.use(
 
 restService.use(bodyParser.json());
 
+restService.post("/OnLights", function(req, res) {
+	var onLightsUrl = 'https://pjhass.duckdns.org/api/services/switch/turn_on?api_password=pjhome2018';
+	onOffLights(onLightsUrl, req, function(response) {
+		if (response) {
+			return res.json(getJsonResp("Turning On " + req, "OnLights"));
+		} else {
+			return res.json(getJsonResp("Sorry I could'nt turn on " + req + ". Please try again", "OnLights"));
+		}
+	});
+});
+
+restService.post("/OffLights", function(req, res) {
+	var offLightsUrl = 'https://pjhass.duckdns.org/api/services/switch/turn_off?api_password=pjhome2018';
+	onOffLights(offLightsUrl, req, function(response) {
+		if (response) {
+			return res.json(getJsonResp("Turning Off " + req, "OffLights"));
+		} else {
+			return res.json(getJsonResp("Sorry I could'nt turn off " + req + ". Please try again", "OffLights"));
+		}
+	});
+});
+
 restService.post("/changeChannel", function(req, res) {
    var requestedChannel = getRequestedChannelIFTTT(req);
    var changeChannelUrl = 'https://pjhass.duckdns.org/api/services/script/turn_on?api_password=pjhome2018';
@@ -281,6 +303,28 @@ function openOrCloseMainGarage(urlToCall, callback) {
     .end(function(err, resp) {
       return callback(true);
     });
+}
+
+function onOffLights(urlToCall, requestedLight, callback) {
+	var entityToChange = "";
+	var reqLight = requestedLight.toUpperCase();
+	switch(reqLight) {
+		case "LIVINGROOM":
+			entityToChange = "";
+			break;
+		case "PORCH":
+			entityToChange = "";
+			break;
+	}
+	if (entityToChange != ""){
+      sa.post(urlToCall)
+       .send('{"entity_id":"' + entityToChange + '"}')
+       .end(function(err, resp) {
+         return callback(true);
+       });
+   } else {
+      return callback(false);
+   }
 }
 
 function changeChannel(urlToCall, requestedChannel, callback) {
