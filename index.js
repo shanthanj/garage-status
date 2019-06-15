@@ -332,18 +332,18 @@ function openOrCloseMainGarage(urlToCall, callback) {
 }
 
 function onOffLights(urlToCall, requestedLight, callback) {
-	console.log("In: onOffLights()" + requestedLight);
 	var entityToChange = "";
 	var reqLight = requestedLight.toUpperCase();
 	switch(reqLight) {
 		case "LIVINGROOM":
-			entityToChange = reqLight;
+			entityToChange = "switch.living_lights";
 			break;
 		case "PORCH":
-			entityToChange = reqLight;
+			entityToChange = "switch.outside_lights";
 			break;
 	}
 	if (entityToChange != ""){
+		console.log("In: onOffLights()" + entityToChange + "URL: " + urlToCall);
       sa.post(urlToCall)
        .send('{"entity_id":"' + entityToChange + '"}')
        .end(function(err, resp) {
