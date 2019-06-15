@@ -61,9 +61,34 @@ restService.post("/garageStatus", function(req, res) {
   var openMainGarageUrl = 'https://pjhass.duckdns.org/api/services/cover/open_cover?api_password=pjhome2018';
   var closeMainGarageUrl = 'https://pjhass.duckdns.org/api/services/cover/close_cover?api_password=pjhome2018';
   var changeChannelUrl = 'https://pjhass.duckdns.org/api/services/script/turn_on?api_password=pjhome2018';
+  var onLightsUrl = 'https://pjhass.duckdns.org/api/services/switch/turn_on?api_password=pjhome2018';
+  var offLightsUrl = 'https://pjhass.duckdns.org/api/services/switch/turn_off?api_password=pjhome2018';
   var status;
 
  switch(requestedIntent) {
+ 
+   case "OnLights":
+	  var requestedLight = getRequestedLight(req);
+	  onOffLights (onLightsUrl, requestedLight, function (response) {
+		if (response) {
+             return res.json(getJsonResp("Turning On " + requestedLight, "OnLights"));
+          } else {
+             return res.json(getJsonResp("Sorry I could'nt turn on " + requestedLight + ". Try again", "OnLights"));
+          }
+	  });
+	  break;
+	  
+	case "OffLights":
+	  var requestedLight = getRequestedLight(req);
+	  onOffLights (offLightsUrl, requestedLight, function (response) {
+		if (response) {
+             return res.json(getJsonResp("Turning Off " + requestedLight, "OffLights"));
+          } else {
+             return res.json(getJsonResp("Sorry I could'nt turn off " + requestedLight + ". Try again", "OffLights"));
+          }
+	  });
+	  break;
+ 
    case "changeChannel":
        var requestedChannel = getRequestedChannel(req);
        changeChannel(changeChannelUrl, requestedChannel, function(response) {
@@ -115,6 +140,7 @@ restService.post("/garageStatus", function(req, res) {
           }
        });
       break;
+
 
    default:
         console.log("Do nothing");
@@ -374,6 +400,10 @@ function getRequestedIntent(req) {
 
 function getRequestedChannel(req) {
    return req.body.queryResult.parameters.Channel;
+}
+
+function getRequestedLight(req) {
+	return req.body.queryResult.parameters.Light;
 }
 
 function getRequestedChannelIFTTT(req) {
