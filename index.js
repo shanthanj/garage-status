@@ -332,14 +332,15 @@ function openOrCloseMainGarage(urlToCall, callback) {
 }
 
 function onOffLights(urlToCall, requestedLight, callback) {
+	console.log("In: onOffLights()" + requestedLight);
 	var entityToChange = "";
 	var reqLight = requestedLight.toUpperCase();
 	switch(reqLight) {
 		case "LIVINGROOM":
-			entityToChange = "";
+			entityToChange = reqLight;
 			break;
 		case "PORCH":
-			entityToChange = "";
+			entityToChange = reqLight;
 			break;
 	}
 	if (entityToChange != ""){
