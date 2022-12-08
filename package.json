@@ -10,7 +10,7 @@
   "dependencies": {
     "JSON": "^1.0.0",
     "body-parser": "^1.18.3",
-    "express": "^4.16.3",
+    "express": "^4.17.3",
     "https": "^1.0.0",
     "request": "^2.87.0",
     "superagent": "^3.8.3"
